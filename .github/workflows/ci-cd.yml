@@ -2,7 +2,7 @@ name: CI/CD for ExpenseTracker with Nexus
 
 on:
   push:
-    branches: ["master"]
+    branches: ["main"]
 
 jobs:
   pipeline:
@@ -77,7 +77,8 @@ jobs:
       with:
         host: ${{ secrets.EC2_HOST }}
         username: ubuntu
-        key: ${{ secrets.EC2_SSH_KEY }}
+        key: |
+          ${{ secrets.EC2_SSH_KEY }}
         script_stop: true
         script: |
           echo "🔐 Connected to EC2 Successfully"
