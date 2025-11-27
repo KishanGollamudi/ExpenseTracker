@@ -7,6 +7,8 @@ on:
 jobs:
   pipeline:
     runs-on: ubuntu-latest
+    env:
+      SONAR_HOST: ${{ secrets.SONAR_HOST }}
 
     steps:
     - name: Checkout repository
@@ -15,7 +17,7 @@ jobs:
     - name: Validate required secrets
       run: |
         echo "🔎 Checking Nexus URL: ${{ secrets.NEXUS_REPO_URL }}"
-        echo "🔎 Checking Sonar host: ${{ secrets.SONAR_HOST }}"
+        echo "🔎 Checking Sonar host: $SONAR_HOST"
         if [[ -z "${{ secrets.NEXUS_REPO_URL }}" ]]; then
            echo "❌ ERROR: Missing NEXUS_REPO_URL secret!"
            exit 1
@@ -32,9 +34,7 @@ jobs:
 
     - name: Restore & Build
       run: |
-        echo "🔧 Restoring dependencies..."
         dotnet restore
-        echo "🏗 Building project..."
         dotnet publish -c Release -o out
 
     - name: Upload DLL to Nexus RAW repo
@@ -47,7 +47,7 @@ jobs:
         ${{ secrets.NEXUS_REPO_URL }}ExpenseTracker.dll
 
     - name: Run SonarQube Code Scan (optional)
-      if: ${{ secrets.SONAR_HOST != '' }}
+      if: env.SONAR_HOST != ''
       run: |
         echo "🔍 Running SonarQube Scan..."
         docker run --rm \
@@ -55,7 +55,7 @@ jobs:
           sonarsource/sonar-scanner-cli \
           -Dsonar.projectKey=ExpenseTracker \
           -Dsonar.sources=/src \
-          -Dsonar.host.url=${{ secrets.SONAR_HOST }} \
+          -Dsonar.host.url=$SONAR_HOST \
           -Dsonar.login=${{ secrets.SONAR_TOKEN }}
       continue-on-error: true
 
@@ -79,7 +79,6 @@ jobs:
         username: ubuntu
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
-          echo "🔄 Updating Docker container on EC2..."
           docker pull ${{ secrets.DOCKERHUB_USERNAME }}/expensetracker:latest
           docker stop expensetracker || true
           docker rm expensetracker || true
