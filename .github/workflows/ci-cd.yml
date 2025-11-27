@@ -12,53 +12,76 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Install .NET
+    - name: Validate required secrets
+      run: |
+        echo "🔎 Checking Nexus URL: ${{ secrets.NEXUS_REPO_URL }}"
+        echo "🔎 Checking Sonar host: ${{ secrets.SONAR_HOST }}"
+        if [[ -z "${{ secrets.NEXUS_REPO_URL }}" ]]; then
+           echo "❌ ERROR: Missing NEXUS_REPO_URL secret!"
+           exit 1
+        fi
+        if [[ "${{ secrets.NEXUS_REPO_URL }}" != */ ]]; then
+           echo "❌ ERROR: NEXUS_REPO_URL must end with /"
+           exit 1
+        fi
+
+    - name: Install .NET SDK
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '8.0.x'
 
-    - name: Build .NET
+    - name: Restore & Build
       run: |
+        echo "🔧 Restoring dependencies..."
         dotnet restore
+        echo "🏗 Building project..."
         dotnet publish -c Release -o out
 
-    - name: Upload DLL to Nexus RAW
+    - name: Upload DLL to Nexus RAW repo
       run: |
-        echo "Uploading artifact to Nexus..."
+        echo "📦 Uploading artifact to Nexus at:"
+        echo "${{ secrets.NEXUS_REPO_URL }}ExpenseTracker.dll"
+        
         curl -v -u ${{ secrets.NEXUS_USERNAME }}:${{ secrets.NEXUS_PASSWORD }} \
         --upload-file ./out/ExpenseTracker.dll \
         ${{ secrets.NEXUS_REPO_URL }}ExpenseTracker.dll
 
-    - name: SonarQube Scan
+    - name: Run SonarQube Code Scan (optional)
+      if: ${{ secrets.SONAR_HOST != '' }}
       run: |
+        echo "🔍 Running SonarQube Scan..."
         docker run --rm \
-        -v ${{ github.workspace }}:/src \
-        sonarsource/sonar-scanner-cli \
-        -Dsonar.projectKey=ExpenseTracker \
-        -Dsonar.sources=/src \
-        -Dsonar.host.url=${{ secrets.SONAR_HOST }} \
-        -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+          -v ${{ github.workspace }}:/src \
+          sonarsource/sonar-scanner-cli \
+          -Dsonar.projectKey=ExpenseTracker \
+          -Dsonar.sources=/src \
+          -Dsonar.host.url=${{ secrets.SONAR_HOST }} \
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
       continue-on-error: true
 
-    - name: Login to Docker Hub
+    - name: DockerHub Login
       uses: docker/login-action@v3
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: Build & Push Docker image
+    - name: Build & Push Docker Image
       run: |
+        echo "🐳 Building Docker image..."
         docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/expensetracker:latest .
+        echo "⬆️ Pushing to DockerHub..."
         docker push ${{ secrets.DOCKERHUB_USERNAME }}/expensetracker:latest
 
-    - name: Deploy to EC2
+    - name: Deploy to EC2 via SSH
       uses: appleboy/ssh-action@v1.2.0
       with:
         host: ${{ secrets.EC2_HOST }}
         username: ubuntu
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
+          echo "🔄 Updating Docker container on EC2..."
           docker pull ${{ secrets.DOCKERHUB_USERNAME }}/expensetracker:latest
           docker stop expensetracker || true
           docker rm expensetracker || true
           docker run -d -p 8080:8080 --name expensetracker ${{ secrets.DOCKERHUB_USERNAME }}/expensetracker:latest
+          echo "🚀 Deployment Completed!"
