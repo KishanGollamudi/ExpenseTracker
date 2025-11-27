@@ -78,9 +78,14 @@ jobs:
         host: ${{ secrets.EC2_HOST }}
         username: ubuntu
         key: ${{ secrets.EC2_SSH_KEY }}
+        script_stop: true
         script: |
+          echo "🔐 Connected to EC2 Successfully"
+          echo "🐳 Pulling latest Docker image..."
           docker pull ${{ secrets.DOCKERHUB_USERNAME }}/expensetracker:latest
+          echo "🛑 Stopping old container…"
           docker stop expensetracker || true
           docker rm expensetracker || true
+          echo "🚀 Starting new container..."
           docker run -d -p 8080:8080 --name expensetracker ${{ secrets.DOCKERHUB_USERNAME }}/expensetracker:latest
-          echo "🚀 Deployment Completed!"
+          echo "🎉 Deployment Successful!"
