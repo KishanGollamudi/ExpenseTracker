@@ -1,96 +1,179 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Expense Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background: #f3f4f6;
-            padding: 40px;
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(ellipse at top, #101014 0%, #0a0a0c 100%);
+            color: #ffffff;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px;
         }
-
+        .brand {
+            font-size: 17px;
+            opacity: 0.8;
+            text-decoration: none;
+            color: #42e8ff;
+            margin-bottom: 25px;
+            font-weight: 300;
+        }
         .container {
-            background: white;
-            width: 500px;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 30px rgba(0,0,0,0.1);
+            width: 520px;
+            background: rgba(255,255,255,0.07);
+            backdrop-filter: blur(14px);
+            border-radius: 18px;
+            padding: 30px;
+            border: 1px solid rgba(255,255,255,0.12);
+            box-shadow: 0 0 40px rgba(0,0,0,0.5);
         }
-
+        h1 {
+            font-size: 29px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 28px;
+            text-align: center;
+        }
         input, select {
             width: 100%;
-            padding: 10px;
-            margin: 8px 0;
-            border-radius: 6px;
-            border: 1px solid #ddd;
+            padding: 15px;
+            font-size: 16px;
+            margin-top: 12px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.18);
+            color: #ffffff;
         }
-
         button {
-            padding: 12px;
             width: 100%;
-            background: black;
-            color: white;
-            font-weight: bold;
-            border-radius: 6px;
+            padding: 15px;
+            font-size: 17px;
+            font-weight: 600;
+            margin-top: 20px;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #0094ff, #00f0ff);
             border: none;
             cursor: pointer;
+            transition: 0.3s;
+            color: #ffffff;
         }
-
-        .exp-card {
-            padding: 10px;
-            border-bottom: 1px solid #eee;
+        button:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 12px #00e6ff;
+        }
+        table {
+            margin-top: 50px;
+            width: 95%;
+            border-collapse: collapse;
+            font-size: 16px;
+            opacity: 0.95;
+        }
+        th {
+            padding: 14px;
+            color: #59d4ff;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+        }
+        td {
+            padding: 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+            font-weight: 300;
+        }
+        tr:hover td {
+            background: rgba(255,255,255,0.05);
         }
     </style>
 </head>
-
 <body>
+
+<a class="brand" href="https://github.com/KishanGollamudi" target="_blank">★ Expense Tracker by Kishan Gollamudi</a>
+
 <div class="container">
-    <h2>Expense Tracker 🧾</h2>
+    <h1>💰 Expense Tracker</h1>
 
-    <input type="text" id="desc" placeholder="Description" />
-    <input type="number" id="amount" placeholder="Amount" />
-    <input type="text" id="category" placeholder="Category" />
-    <input type="date" id="date" />
+    <input id="user" placeholder="👤 Name (Ex: Kishan)">
+    <input id="desc" placeholder="📝 Description">
+    <input id="amount" type="number" placeholder="💵 Amount">
 
-    <button onclick="addExpense()">Add Expense</button>
+    <select id="category">
+        <option disabled selected>📌 Select Category</option>
+        <option>🍔 Food & Dining</option>
+        <option>🛍️ Shopping</option>
+        <option>🎬 Entertainment</option>
+        <option>🚕 Travel & Transport</option>
+        <option>📱 Mobile & Internet</option>
+        <option>🏠 Rent & Housing</option>
+        <option>💡 Electricity & Bills</option>
+        <option>💼 Work & Office</option>
+        <option>🏥 Health & Medical</option>
+        <option>🎁 Gifts & Donations</option>
+        <option>📚 Education & Courses</option>
+        <option>🐾 Pets</option>
+        <option>🧾 Subscriptions</option>
+        <option>💳 EMIs & Loan</option>
+        <option>🧴 Self-care</option>
+        <option>⚙️ Other</option>
+    </select>
 
-    <h3>History</h3>
-    <div id="list"></div>
+    <input id="date" type="date">
+
+    <button onclick="addExpense()">➕ Add Expense</button>
 </div>
 
+<table>
+    <thead>
+        <tr>
+            <th>User</th>
+            <th>Description</th>
+            <th>₹ Amount</th>
+            <th>Category</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+    <tbody id="expenseTable"></tbody>
+</table>
+
 <script>
-const BASE_URL = "http://18.207.121.120:5132";
-
 async function loadExpenses() {
-    let res = await fetch(`${BASE_URL}/api/expenses`);
-    let data = await res.json();
-
-    let html = "";
-    data.forEach(e => {
-        html += `<div class='exp-card'>
-                    <b>${e.description}</b> - ₹${e.amount}
-                    <br>
-                    <small>${e.category} | ${e.date}</small>
-                </div>`;
+    const res = await fetch("/api/expenses");
+    const data = await res.json();
+    const table = document.getElementById("expenseTable");
+    table.innerHTML = "";
+    data.forEach(exp => {
+        table.innerHTML += `<tr>
+            <td>${exp.user}</td>
+            <td>${exp.description}</td>
+            <td>₹ ${exp.amount}</td>
+            <td>${exp.category}</td>
+            <td>${exp.date}</td>
+        </tr>`;
     });
-    
-    document.getElementById("list").innerHTML = html;
 }
 
 async function addExpense() {
-    let desc = document.getElementById("desc").value;
-    let amount = document.getElementById("amount").value;
-    let category = document.getElementById("category").value;
-    let date = document.getElementById("date").value;
+    const user = document.getElementById("user").value;
+    const desc = document.getElementById("desc").value;
+    const amount = Number(document.getElementById("amount").value);
+    const category = document.getElementById("category").value;
+    const date = document.getElementById("date").value;
 
-    await fetch(`${BASE_URL}/api/expenses`, {
+    if (!user || !desc || !amount || category === "📌 Select Category") {
+        alert("Please enter valid values.");
+        return;
+    }
+
+    await fetch("/api/expenses", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
+            user: user,
             description: desc,
-            amount: parseFloat(amount),
+            amount: amount,
             category: category,
             date: date
         })
@@ -98,7 +181,6 @@ async function addExpense() {
 
     loadExpenses();
 }
-
 loadExpenses();
 </script>
 

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/home/ubuntu/ExpenseTracker/ExpenseTracker/ExpenseTracker.csproj": {}
+    "/home/ubuntu/ExpenseTracker/ExpenseTracker.csproj": {}
   },
   "projects": {
-    "/home/ubuntu/ExpenseTracker/ExpenseTracker/ExpenseTracker.csproj": {
+    "/home/ubuntu/ExpenseTracker/ExpenseTracker.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/ubuntu/ExpenseTracker/ExpenseTracker/ExpenseTracker.csproj",
+        "projectUniqueName": "/home/ubuntu/ExpenseTracker/ExpenseTracker.csproj",
         "projectName": "ExpenseTracker",
-        "projectPath": "/home/ubuntu/ExpenseTracker/ExpenseTracker/ExpenseTracker.csproj",
+        "projectPath": "/home/ubuntu/ExpenseTracker/ExpenseTracker.csproj",
         "packagesPath": "/home/ubuntu/.nuget/packages/",
-        "outputPath": "/home/ubuntu/ExpenseTracker/ExpenseTracker/obj/",
+        "outputPath": "/home/ubuntu/ExpenseTracker/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/ubuntu/.nuget/NuGet/NuGet.Config"

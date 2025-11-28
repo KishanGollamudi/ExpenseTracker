@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "xK9VeG+W9w97sKASc3Mv1gLYWMfYfFF3Iz2xsQc74eo=",
+  "Hash": "dYggLX2FknlDUGlieMIZHqkte39kvZ8smFGhT2C4pjY=",
   "Source": "ExpenseTracker",
   "BasePath": "_content/ExpenseTracker",
   "Mode": "Default",
@@ -10,17 +10,17 @@
     {
       "Name": "ExpenseTracker/wwwroot",
       "Source": "ExpenseTracker",
-      "ContentRoot": "/home/ubuntu/ExpenseTracker/ExpenseTracker/wwwroot/",
+      "ContentRoot": "/home/ubuntu/ExpenseTracker/wwwroot/",
       "BasePath": "_content/ExpenseTracker",
       "Pattern": "**"
     }
   ],
   "Assets": [
     {
-      "Identity": "/home/ubuntu/ExpenseTracker/ExpenseTracker/wwwroot/index.html",
+      "Identity": "/home/ubuntu/ExpenseTracker/wwwroot/index.html",
       "SourceId": "ExpenseTracker",
       "SourceType": "Discovered",
-      "ContentRoot": "/home/ubuntu/ExpenseTracker/ExpenseTracker/wwwroot/",
+      "ContentRoot": "/home/ubuntu/ExpenseTracker/wwwroot/",
       "BasePath": "_content/ExpenseTracker",
       "RelativePath": "index.html",
       "AssetKind": "All",

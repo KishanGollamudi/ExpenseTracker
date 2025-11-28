@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "LvIMrwOqoShWEiWqRcq7Sce8CAC9DVtfFAPZwXa+YYYS0cSwNcgA2Be9QHWKl4S19IUf3hst0NBlXpyda07lNw==",
+  "dgSpecHash": "hnkQtCpNzB1W3nbrhYnfqw/dnb7Vc4/7KnGXYBcoH8/vcJO+6bhOLwHHGfpTxxaHMxAeWXmfLFCJlojFQBVuhg==",
   "success": true,
-  "projectFilePath": "/home/ubuntu/ExpenseTracker/ExpenseTracker/ExpenseTracker.csproj",
+  "projectFilePath": "/home/ubuntu/ExpenseTracker/ExpenseTracker.csproj",
   "expectedPackageFiles": [
     "/home/ubuntu/.nuget/packages/microsoft.aspnetcore.openapi/8.0.21/microsoft.aspnetcore.openapi.8.0.21.nupkg.sha512",
     "/home/ubuntu/.nuget/packages/microsoft.extensions.apidescription.server/6.0.5/microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",

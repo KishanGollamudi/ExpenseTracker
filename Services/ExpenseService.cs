@@ -1,17 +1,22 @@
-namespace ExpenseTracker.Services;
 using ExpenseTracker.Models;
 
-public class ExpenseService
+namespace ExpenseTracker.Services
 {
-    private readonly List<Expense> _expenses = new();
-
-    public List<Expense> GetAll()
+    public class ExpenseService
     {
-        return _expenses;
-    }
+        private List<Expense> expenses = new();
 
-    public void Add(Expense expense)
-    {
-        _expenses.Add(expense);
+        public List<Expense> GetAll() => expenses;
+
+        public void Add(Expense expense)
+        {
+            if (string.IsNullOrWhiteSpace(expense.Date))
+            {
+                expense.Date = DateTime.Now.ToString("yyyy-MM-dd");
+            }
+
+            expenses.Add(expense);
+        }
     }
 }
+

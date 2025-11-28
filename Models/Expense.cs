@@ -1,9 +1,12 @@
-namespace ExpenseTracker.Models;
-
-public class Expense
+namespace ExpenseTracker.Models
 {
-    public int Id { get; set; }
-    public string Description { get; set; } = "";
-    public string Category { get; set; } = "";
-    public decimal Amount { get; set; }
+    public class Expense
+    {
+        public string? User { get; set; } = "";
+        public string? Description { get; set; } = "";
+        public double Amount { get; set; }
+        public string? Category { get; set; } = "";
+        public string? Date { get; set; } = "";
+    }
 }
+
